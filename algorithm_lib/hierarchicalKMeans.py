@@ -1,6 +1,5 @@
 import random
 
-from matplotlib import pyplot as plt
 
 from algorithm_lib.seeded_kmeans import Seeded_KMeans
 from algorithm_lib.kmeans import *
@@ -73,18 +72,3 @@ class hierarchicalKMeans:
             if self.check_converged():
                 break
         return self.centers, self.labels, self.n_cluster
-
-def kmeans_visualize(X, centers, labels, n_cluster, title):
-    plt.xlabel('x')  # label trục x
-    plt.ylabel('y')  # label trục y
-    plt.title(title)  # title của đồ thị
-    plt_colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']  # danh sách các màu hỗ trợ
-
-    for i in range(n_cluster):
-        data = X[labels == i]  # lấy dữ liệu của cụm i
-        plt.plot(data[:, 0], data[:, 1], random.choice(plt_colors) + '^', markersize=4,
-                 label='cluster_' + str(i))  # Vẽ cụm i lên đồ thị
-        plt.plot(centers[i][0], centers[i][1], random.choice(plt_colors) + 'o', markersize=10,
-                 label='center_' + str(i))  # Vẽ tâm cụm i lên đồ thị
-    plt.legend()  # Hiện bảng chú thích
-    plt.show()
