@@ -1,4 +1,4 @@
-import random
+# import random
 
 
 from algorithm_lib.seeded_kmeans import Seeded_KMeans
@@ -43,7 +43,7 @@ class hierarchicalKMeans:
         # Bước 2 + 3: vòng lặp
         while True:
             centers_tmp = []
-            lables_tmp =list(self.labels)
+            lables_tmp = list(self.labels)
             n_clusters_tmp = 0
             for k in range(self.n_cluster):
                 dataset_sep = self.dataset[self.labels == k, :]
