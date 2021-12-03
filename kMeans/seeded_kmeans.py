@@ -1,10 +1,9 @@
 import numpy as np  # thư viện tính toán toán học
-from scipy.spatial.distance import cdist  # Hỗ trợ tính khoảng cách
-from algorithm_lib.kmeans import K_means
+from .kmeans import K_means
 
 
 class Seeded_KMeans(K_means):
-    def fit(self, arrBase, n_cluster, arrCluster):
+    def fit_(self, arrBase, n_cluster, arrCluster):
         """
         :param arrBase: numpy.array: cụm đã được phân cụm, là tập giống có dạng mảng [cụm 1, cụm 2,...]
         :param n_cluster: int : là số cụm đã phân ở arrBase

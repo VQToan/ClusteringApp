@@ -1,8 +1,5 @@
-# import random
-
-
-from algorithm_lib.seeded_kmeans import Seeded_KMeans
-from algorithm_lib.kmeans import *
+from .seeded_kmeans import Seeded_KMeans
+from .kmeans import *
 
 
 class hierarchicalKMeans:
@@ -36,7 +33,7 @@ class hierarchicalKMeans:
 
     def fit(self):
         # Bước 1: Chạy thuật toán Seed-KMeans
-        self.centers, self.labels = self.s_KMeans.fit(self.base_dataset, self.n_cluster, self.dataset)
+        self.centers, self.labels = self.s_KMeans.fit_(self.base_dataset, self.n_cluster, self.dataset)
         self.total_BIC = self.BIC.calculate([self.dataset[self.labels == i, :] for i in range(self.n_cluster)],
                                             self.centers, self.n_cluster)
         # print(self.labels)

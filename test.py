@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 from matplotlib import pyplot as plt
-from algorithm_lib.hierarchicalKMeans import hierarchicalKMeans
+from kMeans import hierarchicalKMeans
 
 
 def kmeans_visualize(X, centers, labels, n_cluster, title):
@@ -40,7 +40,7 @@ plt.plot(dataset[:, 0], dataset[:, 1], 'bo', markersize=5)
 plt.plot()
 plt.show()
 
-cluster_action = hierarchicalKMeans(dataset, 7, dataset_base, 3)
+cluster_action = hierarchicalKMeans.hierarchicalKMeans(dataset, 7, dataset_base, 3)
 centers, labels, n_cluster = cluster_action.fit()
 # print(centers)
 kmeans_visualize(dataset, centers, labels, n_cluster, "Done")
