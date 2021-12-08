@@ -34,6 +34,7 @@ class hierarchicalKMeans:
     def fit(self):
         # Bước 1: Chạy thuật toán Seed-KMeans
         self.centers, self.labels = self.s_KMeans.fit_(self.base_dataset, self.n_cluster, self.dataset)
+        # print(self.dataset)
         self.total_BIC = self.BIC.calculate([self.dataset[self.labels == i, :] for i in range(self.n_cluster)],
                                             self.centers, self.n_cluster)
         # print(self.labels)
@@ -47,8 +48,9 @@ class hierarchicalKMeans:
                 # print(self.centers[k,:])
                 BIC_before = self.BIC.calculate([dataset_sep], np.array([self.centers[k, :]]), 1)
                 centers, labels = self.kMeans.fit(dataset_sep, 2)
-                BIC_after = self.BIC.calculate([dataset_sep[labels == i, :] for i in range(2)], centers, 2)
-                # print(n_clusters_tmp)
+                # print(len(centers))
+                BIC_after = self.BIC.calculate([dataset_sep[labels == i, :] for i in range(len(centers))], centers, len(centers))
+                # print(BIC_after, BIC_before)
                 if BIC_after > BIC_before:
                     centers_tmp.extend(list(centers))
                     labels = list(labels)

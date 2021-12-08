@@ -25,6 +25,7 @@ class K_means:
             Xk = X[labels == k, :]
             # take average
             centers[k, :] = np.mean(Xk, axis=0)
+            # print(centers[k, :])
         return centers
 
     def kmeans_has_converged(self, centers, new_centers):
@@ -75,6 +76,7 @@ class BIC:
     def cluster_variance(self, n_dims, clusters, n_points, centers):
         s = 0
         denom = float(n_points - len(centers)) * n_dims
+        if denom <= 0: return 0
         for cluster, centroid in zip(clusters, centers):
             distances = cdist(cluster, [centroid])
             s += (distances * distances).sum()
@@ -86,11 +88,11 @@ class BIC:
         n_dims = clusters[0].shape[1]
         n_points = sum(len(cluster) for cluster in clusters)
 
-        BIC = (self.n_param(n_clusters, n_dims) * np.log10(n_points)) + 2 * self.log_likelihood(n_points, n_dims,
+        BIC = -(self.n_param(n_clusters, n_dims) * np.log10(n_points)) + 2 * self.log_likelihood(n_points, n_dims,
                                                                                                clusters, centers)
         # BIC = self.log_likelihood(n_points, n_dims, clusters, centers) - self.n_param(n_clusters,n_dims) / 2.0 * np.log(n_points)
-        print(BIC)
-        return -BIC
+        # print(BIC)
+        return BIC
 
     def check_input_format(self, clusters, centers, n_clusters):
         if len(clusters) != n_clusters:

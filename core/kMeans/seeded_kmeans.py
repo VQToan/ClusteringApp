@@ -13,6 +13,7 @@ class Seeded_KMeans(K_means):
         # Khởi tạo các tâm từ tập giống
         init_centers = self.S_kmeans_init_centers(arrBase, n_cluster)
         # chạy thuật toán
+        # print(arrCluster)
         centers, labels = self.kmeans(arrCluster,init_centers, n_cluster)
         return centers, labels
 
