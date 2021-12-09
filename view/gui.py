@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.detailWindows = detailClusterred(self)
         self.btn_detail.clicked.connect(self.showDetail)
         self.fieldBaseLabel.setWordWrap(True)
-        self.tabAll.currentChanged.connect(self.checkDataset)
+        self.tabAll.currentChanged.connect(self.checkTabCurrent)
         self.show()
 
     """
@@ -51,6 +51,32 @@ class MainWindow(QMainWindow):
         self.dirtext.setText(response[0])
 
     def loadDataset(self):
+        # Xóa tất cả cá biến
+        # biến tab1
+        self.n_Sample.clear()
+        self.n_Field.clear()
+        self.listViewField.clear()
+        try:
+            del self.dataset, self.header
+        except:
+            pass
+        # Biến tab2
+        self.cbb_FieldBase.clear()
+        self.fieldBaseLabel.clear()
+        self.listWidgetFeildBase.clear()
+        self.n_clusterBaseLabel.clear()
+        try:
+            del self.headerBase,self.datasetBase_raw , self.datasetBase, self.kMin
+        except:
+            pass
+        #  biến tab3
+        self.kMax.clear()
+        self.listWidgetField4Run.clear()
+        try:
+            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        except:
+            pass
+        # đọc từ file
         dir = self.dirtext.toPlainText()
         if dir.strip() == "" or not os.path.exists(dir):
             self.showdialog("Đường dẫn không hợp lệ hoặc tập tin không tồn tại!")
@@ -69,9 +95,26 @@ class MainWindow(QMainWindow):
     """
 
     def getBaseInFileFunc(self):
+        # Biến tab2
+        self.cbb_FieldBase.clear()
+        self.fieldBaseLabel.clear()
+        self.listWidgetFeildBase.clear()
+        self.n_clusterBaseLabel.clear()
+        try:
+            del self.datasetBase_raw, self.headerBase, self.datasetBase, self.kMin
+        except:
+            pass
+        #  biến tab3
+        self.kMax.clear()
+        self.listWidgetField4Run.clear()
+        try:
+            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        except:
+            pass
+        #
         file_filter = 'Data File (*.csv)'
         response = QtWidgets.QFileDialog.getOpenFileName(
-            parent=self.loadFile,
+            parent=self.getBaseInFile,
             caption='Select a data file',
             directory=os.getcwd(),
             filter=file_filter,
@@ -87,6 +130,23 @@ class MainWindow(QMainWindow):
         self.listWidgetFeildBase.clear()
 
     def getBaseInDatasetFunc(self):
+        # Biến tab2
+        self.cbb_FieldBase.clear()
+        self.fieldBaseLabel.clear()
+        self.listWidgetFeildBase.clear()
+        self.n_clusterBaseLabel.clear()
+        try:
+            del self.datasetBase_raw, self.headerBase, self.datasetBase, self.kMin
+        except:
+            pass
+        #  biến tab3
+        self.kMax.clear()
+        self.listWidgetField4Run.clear()
+        try:
+            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        except:
+            pass
+
         try:
             self.dataset,
             self.header
@@ -101,35 +161,55 @@ class MainWindow(QMainWindow):
         self.listWidgetFeildBase.clear()
 
     def indexChanged1(self, index):
+        #  biến tab3
+        self.kMax.clear()
+        self.listWidgetField4Run.clear()
+        try:
+            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        except:
+            pass
         if index == 0:
             self.listWidgetFeildBase.clear()
             self.fieldBaseLabel.clear()
             self.n_clusterBaseLabel.clear()
-        else:
+            return
+        if index > 0:
             index = index - 1
             self.listWidgetFeildBase.clear()
             # print(index)
             self.datasetBase, val_Cell = cluseringByCell(self.datasetBase_raw, index)
+            self.kMin = len(val_Cell)
             self.fieldBaseLabel.setText(self.headerBase[index])
             self.n_clusterBaseLabel.setText(str(len(val_Cell)))
             for item in val_Cell:
                 self.listWidgetFeildBase.addItem(item)
 
     def setOption2cbbBase(self, optionList):
+        self.kMax.clear()
+        self.listWidgetField4Run.clear()
         self.cbb_FieldBase.addItem("Vui lòng chọn")
         for item in optionList:
             self.cbb_FieldBase.addItem(item)
 
     def indexChanged0(self, index):
+        #  biến tab3
+        self.kMax.clear()
+        self.listWidgetField4Run.clear()
+        try:
+            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        except:
+            pass
         if index == 0:
             self.listWidgetFeildBase.clear()
             self.fieldBaseLabel.clear()
             self.n_clusterBaseLabel.clear()
-        else:
+            return
+        if index > 0:
             index = index - 1
             self.listWidgetFeildBase.clear()
             self.datasetBase, val_Cell = cluseringByCell(self.dataset, index)
             self.kMin = len(val_Cell)
+            self.headerBase = []
             self.headerBase = self.header
             # print(self.headerBase[index])
             self.fieldBaseLabel.setText(self.headerBase[index])
@@ -143,6 +223,7 @@ class MainWindow(QMainWindow):
     """
 
     def showListField4Run(self):
+        self.listWidgetField4Run.clear()
         #  Chọn các thuộc tính chung của tập giống và tập phân cụm
         item = QListWidgetItem()
         item.setText("Chọn tất cả")
@@ -150,6 +231,10 @@ class MainWindow(QMainWindow):
         item.setCheckState(QtCore.Qt.Unchecked)
         self.listWidgetField4Run.addItem(item)
         sharedField = list(set(self.header) & set(self.headerBase))
+        if len(sharedField)< 2:
+            self.showdialog("Vui lòng chọn đúng tập giống")
+            self.tabAll.setCurrentIndex(1)
+            return
         for itemstr in sharedField:
             item = QListWidgetItem()
             item.setText(itemstr)
@@ -189,7 +274,7 @@ class MainWindow(QMainWindow):
         # print(self.field4RunList)
         self.setProgressBar(10)
         self.clusteredData, self.listPercent, self.labels = runAlgorithm(self.dataset, self.datasetBase, self.header,
-                                                                        self.headerBase, self.field4RunList, kmax)
+                                                                         self.headerBase, self.field4RunList, kmax)
         self.setProgressBar(98)
         self.tabAll.setCurrentIndex(3)
         # print(self.clusteredData)
@@ -231,6 +316,7 @@ class MainWindow(QMainWindow):
         lay.addWidget(chartview)
 
     def showDetail(self):
+        self.detailWindows.treeDetail.clear()
         self.detailWindows.show()
         for i in range(len(self.clusteredData)):
             tmp = QTreeWidgetItem([f"Nhóm {i + 1}"])
@@ -250,9 +336,10 @@ class MainWindow(QMainWindow):
             initialFilter='Data File (*.csv)'
         )
         try:
-            saveResult(response[0],np.array(self.dataset),self.labels,len(self.clusteredData),self.field4RunList)
+            saveResult(response[0], np.array(self.dataset), self.labels, len(self.clusteredData), self.field4RunList)
         except:
             return
+
     """
     ------------------------------------------------------------------------------------------------------
     """
@@ -263,6 +350,8 @@ class MainWindow(QMainWindow):
             for i in range(currentIdx, index, 5):
                 self.progressBar.setValue(i)
                 time.sleep(0.1)
+        if self.progressBar.value() in [i for i in range(95, 101)]:
+            self.progressBar.setValue(0)
 
     def showdialog(self, s):
         msg = QtWidgets.QMessageBox()
@@ -272,7 +361,7 @@ class MainWindow(QMainWindow):
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec()
 
-    def checkDataset(self):
+    def checkTabCurrent(self):
         index = self.tabAll.currentIndex()
         # print(index)
         if index == 2:
@@ -281,17 +370,19 @@ class MainWindow(QMainWindow):
                 self.datasetBase,
                 self.header,
                 self.headerBase,
+                self.kMin
             except:
                 self.showdialog("Vui lòng thêm hoàn chỉnh dữ liệu ở 2 thẻ trước!")
                 self.tabAll.setCurrentIndex(0)
                 return
+            # print(self.datasetBase)
             self.showListField4Run()
         if index == 3:
             try:
                 self.dataset,
                 self.datasetBase,
                 self.header,
-                self.headerBase,
+                self.headerBase
             except:
                 self.showdialog("Vui lòng thêm hoàn chỉnh dữ liệu ở 2 thẻ đầu!")
                 self.tabAll.setCurrentIndex(0)
