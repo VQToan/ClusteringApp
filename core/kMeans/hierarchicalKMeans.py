@@ -24,7 +24,7 @@ class hierarchicalKMeans:
         # print(self.labels)
         BIC_now = self.BIC.calculate([self.dataset[self.labels == i, :] for i in range(self.n_cluster)],
                                      self.centers, self.n_cluster)
-        if BIC_now == self.total_BIC:
+        if BIC_now <= self.total_BIC:
             return True
         if self.n_cluster >= self.k_max:
             return True
@@ -45,25 +45,26 @@ class hierarchicalKMeans:
             n_clusters_tmp = 0
             for k in range(self.n_cluster):
                 dataset_sep = self.dataset[self.labels == k, :]
-                # print(self.centers[k,:])
-                BIC_before = self.BIC.calculate([dataset_sep], np.array([self.centers[k, :]]), 1)
-                centers, labels = self.kMeans.fit(dataset_sep, 2)
-                # print(len(centers))
-                BIC_after = self.BIC.calculate([dataset_sep[labels == i, :] for i in range(len(centers))], centers, len(centers))
-                # print(BIC_after, BIC_before)
-                if BIC_after > BIC_before:
-                    centers_tmp.extend(list(centers))
-                    labels = list(labels)
-                    for i in range(0, len(self.labels)):
-                        if self.labels[i] == k:
-                            lables_tmp[i] = int(labels.pop(0) + n_clusters_tmp)
-                    n_clusters_tmp += 2
-                else:
-                    centers_tmp.append(self.centers[k, :])
-                    for i in range(0, len(self.labels)):
-                        if self.labels[i] == k:
-                            lables_tmp[i] = int(n_clusters_tmp)
-                    n_clusters_tmp += 1
+                if len(dataset_sep) >= 2:
+                    BIC_before = self.BIC.calculate([dataset_sep], np.array([self.centers[k, :]]), 1)
+                    centers, labels = self.kMeans.fit(dataset_sep, 2)
+                    # print(len(centers))
+                    BIC_after = self.BIC.calculate([dataset_sep[labels == i, :] for i in range(len(centers))], centers,
+                                                   len(centers))
+                    # print(BIC_after, BIC_before)
+                    if BIC_after > BIC_before:
+                        centers_tmp.extend(list(centers))
+                        labels = list(labels)
+                        for i in range(0, len(self.labels)):
+                            if self.labels[i] == k:
+                                lables_tmp[i] = int(labels.pop(0) + n_clusters_tmp)
+                        n_clusters_tmp += 2
+                    else:
+                        centers_tmp.append(self.centers[k, :])
+                        for i in range(0, len(self.labels)):
+                            if self.labels[i] == k:
+                                lables_tmp[i] = int(n_clusters_tmp)
+                        n_clusters_tmp += 1
             self.centers = np.array(centers_tmp)
             self.labels = np.array(lables_tmp)
             self.n_cluster = n_clusters_tmp

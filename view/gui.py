@@ -1,15 +1,14 @@
 import os
-import sys
 import time
 
+import numpy as np
 from PyQt5.uic import loadUi
-from PyQt5.QtChart import QChart, QChartView, QPieSeries, QPieSlice
-from PyQt5.QtGui import QPainter, QPen
+from PyQt5.QtChart import QChart, QChartView, QPieSeries
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTreeWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QTreeWidgetItem
 
 from core.actionCSV import *
-from core.run_algorithm import *
+from core.run_algorithm import runAlgorithm
 
 
 class detailClusterred(QMainWindow):
@@ -22,6 +21,9 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         loadUi("view/Clustering_App.ui", self)
+        self.widgetPieChart.setContentsMargins(0, 0, 0, 0)
+        self.lay = QtWidgets.QHBoxLayout(self.widgetPieChart)
+        self.lay.setContentsMargins(0, 0, 0, 0)
         self.loadFile.clicked.connect(self.loadDataset)
         self.browserDir.clicked.connect(self.getFileName)
         self.getBaseInDataset.clicked.connect(self.getBaseInDatasetFunc)
@@ -32,6 +34,9 @@ class MainWindow(QMainWindow):
         self.btn_detail.clicked.connect(self.showDetail)
         self.fieldBaseLabel.setWordWrap(True)
         self.tabAll.currentChanged.connect(self.checkTabCurrent)
+        self.tableWidgetPredict.setColumnWidth(0, 440)
+        self.tableWidgetPredict.setColumnWidth(1, 297)
+        self.btnResetPredict.clicked.connect(self.resetPredict)
         self.show()
 
     """
@@ -56,26 +61,29 @@ class MainWindow(QMainWindow):
         self.n_Sample.clear()
         self.n_Field.clear()
         self.listViewField.clear()
-        try:
-            del self.dataset, self.header
-        except:
-            pass
+        self.delVar(["dataset", "header"])
+        # try:
+        #     del self.dataset, self.header
+        # except:
+        #     pass
         # Biến tab2
         self.cbb_FieldBase.clear()
         self.fieldBaseLabel.clear()
         self.listWidgetFeildBase.clear()
         self.n_clusterBaseLabel.clear()
-        try:
-            del self.headerBase,self.datasetBase_raw , self.datasetBase, self.kMin
-        except:
-            pass
+        self.delVar(["headerBase", "datasetBase_raw", "datasetBase", "kMin"])
+        # try:
+        #     del self.headerBase, self.datasetBase_raw, self.datasetBase, self.kMin
+        # except:
+        #     pass
         #  biến tab3
         self.kMax.clear()
         self.listWidgetField4Run.clear()
-        try:
-            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
-        except:
-            pass
+        self.delVar(["clusteredData", "listPercent", "labels", "field4RunList"])
+        # try:
+        #     del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        # except:
+        #     pass
         # đọc từ file
         dir = self.dirtext.toPlainText()
         if dir.strip() == "" or not os.path.exists(dir):
@@ -100,17 +108,21 @@ class MainWindow(QMainWindow):
         self.fieldBaseLabel.clear()
         self.listWidgetFeildBase.clear()
         self.n_clusterBaseLabel.clear()
-        try:
-            del self.datasetBase_raw, self.headerBase, self.datasetBase, self.kMin
-        except:
-            pass
+        self.delVar(["headerBase", "datasetBase_raw", "datasetBase", "kMin"])
+
+        # try:
+        #     del self.headerBase, self.datasetBase_raw, self.datasetBase, self.kMin
+        # except:
+        #     pass
         #  biến tab3
         self.kMax.clear()
         self.listWidgetField4Run.clear()
-        try:
-            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
-        except:
-            pass
+        self.delVar(["clusteredData", "listPercent", "labels", "field4RunList"])
+
+        # try:
+        #     del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        # except:
+        #     pass
         #
         file_filter = 'Data File (*.csv)'
         response = QtWidgets.QFileDialog.getOpenFileName(
@@ -121,8 +133,11 @@ class MainWindow(QMainWindow):
             initialFilter='Data File (*.csv)'
         )
         dir = response[0]
-        self.datasetBase_raw, self.headerBase = readDataset(dir)
-
+        try:
+            self.datasetBase_raw, self.headerBase = readDataset(dir)
+        except:
+            self.showdialog("File không tồn tại!")
+            return
         self.cbb_FieldBase.clear()
         self.setOption2cbbBase(self.headerBase)
         self.cbb_FieldBase.currentIndexChanged.connect(self.indexChanged1)
@@ -135,17 +150,21 @@ class MainWindow(QMainWindow):
         self.fieldBaseLabel.clear()
         self.listWidgetFeildBase.clear()
         self.n_clusterBaseLabel.clear()
-        try:
-            del self.datasetBase_raw, self.headerBase, self.datasetBase, self.kMin
-        except:
-            pass
+        self.delVar(["headerBase", "datasetBase_raw", "datasetBase", "kMin"])
+
+        # try:
+        #     del self.headerBase, self.datasetBase_raw, self.datasetBase, self.kMin
+        # except:
+        #     pass
         #  biến tab3
         self.kMax.clear()
         self.listWidgetField4Run.clear()
-        try:
-            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
-        except:
-            pass
+        self.delVar(["clusteredData", "listPercent", "labels", "field4RunList"])
+
+        # try:
+        #     del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        # except:
+        #     pass
 
         try:
             self.dataset,
@@ -164,10 +183,12 @@ class MainWindow(QMainWindow):
         #  biến tab3
         self.kMax.clear()
         self.listWidgetField4Run.clear()
-        try:
-            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
-        except:
-            pass
+        self.delVar(["clusteredData", "listPercent", "labels", "field4RunList"])
+
+        # try:
+        #     del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        # except:
+        #     pass
         if index == 0:
             self.listWidgetFeildBase.clear()
             self.fieldBaseLabel.clear()
@@ -195,10 +216,12 @@ class MainWindow(QMainWindow):
         #  biến tab3
         self.kMax.clear()
         self.listWidgetField4Run.clear()
-        try:
-            del self.clusteredData, self.listPercent, self.labels, self.field4RunList
-        except:
-            pass
+        self.delVar(["clusteredData", "listPercent", "labels", "field4RunList"])
+
+        # try:
+        #     del self.clusteredData, self.listPercent, self.labels, self.field4RunList
+        # except:
+        #     pass
         if index == 0:
             self.listWidgetFeildBase.clear()
             self.fieldBaseLabel.clear()
@@ -231,7 +254,7 @@ class MainWindow(QMainWindow):
         item.setCheckState(QtCore.Qt.Unchecked)
         self.listWidgetField4Run.addItem(item)
         sharedField = list(set(self.header) & set(self.headerBase))
-        if len(sharedField)< 2:
+        if len(sharedField) < 2:
             self.showdialog("Vui lòng chọn đúng tập giống")
             self.tabAll.setCurrentIndex(1)
             return
@@ -276,6 +299,10 @@ class MainWindow(QMainWindow):
         self.clusteredData, self.listPercent, self.labels = runAlgorithm(self.dataset, self.datasetBase, self.header,
                                                                          self.headerBase, self.field4RunList, kmax)
         self.setProgressBar(98)
+        try:
+            self.lay.removeWidget(self.chartview)
+        except AttributeError:
+            pass
         self.tabAll.setCurrentIndex(3)
         # print(self.clusteredData)
         # print(self.listPercent)
@@ -296,6 +323,10 @@ class MainWindow(QMainWindow):
     """
 
     def create_piechart(self):
+        try:
+            self.lay.removeWidget(self.chartview)
+        except:
+            pass
         series = QPieSeries()
         for i in range(len(self.listPercent)):
             series.append(f"Nhóm {i + 1}", self.listPercent[i])
@@ -308,12 +339,9 @@ class MainWindow(QMainWindow):
         chart.legend().setVisible(True)
         chart.legend().setAlignment(QtCore.Qt.AlignBottom)
 
-        chartview = QChartView(chart)
+        self.chartview = QChartView(chart)
         # chartview.setRenderHint(QPainter.Antialiasing)
-        self.widgetPieChart.setContentsMargins(0, 0, 0, 0)
-        lay = QtWidgets.QHBoxLayout(self.widgetPieChart)
-        lay.setContentsMargins(0, 0, 0, 0)
-        lay.addWidget(chartview)
+        self.lay.addWidget(self.chartview)
 
     def showDetail(self):
         self.detailWindows.treeDetail.clear()
@@ -341,8 +369,49 @@ class MainWindow(QMainWindow):
             return
 
     """
+    ------------------------------------------TAB5---------------------------------------------------------------
+    """
+
+    def viewTablePredict(self):
+        def getCellValue(cellId, list):
+            tmp = []
+            for item in list:
+                if item[cellId] not in tmp:
+                    tmp.append(item[cellId])
+            return tmp
+
+        self.tableWidgetPredict.clearContents()
+        self.tableWidgetPredict.setRowCount(len(self.field4RunList))
+        self.listCBB = []
+        for k in range(len(self.field4RunList)):
+            self.tableWidgetPredict.setItem(k, 0, QtWidgets.QTableWidgetItem(f"{self.field4RunList[k]}"))
+            self.listCBB.append(QtWidgets.QComboBox())
+            self.listCBB[k].clear()
+            self.listCBB[k].addItems(getCellValue(k, self.clusteredDataPredict))
+            self.tableWidgetPredict.setCellWidget(k, 1, self.listCBB[k])
+            self.listCBB[k].currentIndexChanged.connect(
+                lambda: self.filterListPredict(self.listCBB[self.tableWidgetPredict.currentRow()].currentIndex(),
+                                               self.listCBB[self.tableWidgetPredict.currentRow()].currentText(),
+                                               self.tableWidgetPredict.currentRow()))
+
+    def filterListPredict(self, index, text, cellId):
+        for item in self.clusteredDataPredict:
+            if text not in item[cellId]:
+                self.clusteredDataPredict.remove(item)
+        self.viewTablePredict()
+
+    def resetPredict(self):
+        self.clusteredDataPredict = self.clusteredData.copy()
+        self.viewTablePredict()
+
+    """
     ------------------------------------------------------------------------------------------------------
     """
+
+    def delVar(self, list):
+        for item in list:
+            if item in dir(self):
+                exec("del self.%s" % (item))
 
     def setProgressBar(self, index):
         currentIdx = self.progressBar.value()
@@ -395,3 +464,22 @@ class MainWindow(QMainWindow):
                 self.tabAll.setCurrentIndex(2)
                 return
             self.create_piechart()
+        if index == 4:
+            try:
+                self.dataset,
+                self.datasetBase,
+                self.header,
+                self.headerBase
+            except:
+                self.showdialog("Vui lòng thêm hoàn chỉnh dữ liệu ở 2 thẻ đầu!")
+                self.tabAll.setCurrentIndex(0)
+                return
+            try:
+                self.clusteredData,
+                self.listPercent
+            except:
+                self.showdialog("Vui lòng chạy thuật toán ở thẻ trước")
+                self.tabAll.setCurrentIndex(2)
+                return
+            self.clusteredDataPredict = self.clusteredData.copy()
+            self.viewTablePredict()

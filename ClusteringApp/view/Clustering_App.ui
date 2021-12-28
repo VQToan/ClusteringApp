@@ -485,6 +485,59 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="tabPredict">
+     <attribute name="title">
+      <string>Dự đoán</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableWidgetPredict">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>740</width>
+        <height>521</height>
+       </rect>
+      </property>
+      <property name="tabKeyNavigation">
+       <bool>true</bool>
+      </property>
+      <property name="columnCount">
+       <number>2</number>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Feilds</string>
+       </property>
+       <property name="textAlignment">
+        <set>AlignCenter</set>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Options</string>
+       </property>
+       <property name="textAlignment">
+        <set>AlignCenter</set>
+       </property>
+      </column>
+     </widget>
+     <widget class="QPushButton" name="btnResetPredict">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>550</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Đặt lại</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
