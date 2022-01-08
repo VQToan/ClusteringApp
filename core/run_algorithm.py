@@ -1,8 +1,34 @@
+import re
+
 import numpy as np
 from collections import Counter
 
 from core.kMeans.hierarchicalKMeans import hierarchicalKMeans
 
+
+def getInt(ex: str):
+    if ex.isdigit():
+        return int(ex)
+    else:
+        digitList = re.findall(r'\d', ex)
+        if len(digitList) > 0:
+            return int("".join([str(char) for char in digitList]))
+        else:
+            return None
+
+
+def sortEmbedList(embed_list: list):
+    for j in range(len(embed_list)):
+        for i in range(len(embed_list)):
+            if getInt(embed_list[i]) == None:
+                embed_list.append(embed_list.pop(i))
+            else:
+                if i < (len(embed_list) - 2) and getInt(embed_list[i + 1]) != None:
+                    if getInt(embed_list[i]) > getInt(embed_list[i + 1]):
+                        tmp = embed_list[i]
+                        embed_list[i] = embed_list[i + 1]
+                        embed_list[i + 1] = tmp
+    return embed_list
 
 def create_embedlib(input_dataset: list, input_datasetBase: list):
     """
@@ -23,11 +49,11 @@ def create_embedlib(input_dataset: list, input_datasetBase: list):
                 if item[i] not in embed_list:
                     embed_list.append(item[i])
     # print(embed_list)
+
     embed_lib = {}
+    embed_list = sortEmbedList(embed_list)
     for val, key in enumerate(embed_list):
-        # print(key,val)
         embed_lib.update({key: val})
-    # print(embed_lib)
     return embed_lib
 
 
@@ -133,4 +159,4 @@ def runAlgorithm(dataset, datasetBase, header, hearderBase, hearderClus, kMax):
     centers, labels, n_cluster = cluster_action.fit()
     listPercent = getPercent(dataset_tmp, labels, n_cluster)
     clusteredData = deemebed((summary(dataset_tmp, labels, n_cluster)) * 100, embed_lib)
-    return clusteredData,listPercent,labels
+    return clusteredData, listPercent, labels

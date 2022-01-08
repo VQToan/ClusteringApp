@@ -21,7 +21,6 @@ class hierarchicalKMeans:
         self.total_BIC = 0
 
     def check_converged(self):
-        # print(self.labels)
         BIC_now = self.BIC.calculate([self.dataset[self.labels == i, :] for i in range(self.n_cluster)],
                                      self.centers, self.n_cluster)
         if BIC_now <= self.total_BIC:
@@ -37,7 +36,6 @@ class hierarchicalKMeans:
         # print(self.dataset)
         self.total_BIC = self.BIC.calculate([self.dataset[self.labels == i, :] for i in range(self.n_cluster)],
                                             self.centers, self.n_cluster)
-        # print(self.labels)
         # Bước 2 + 3: vòng lặp
         while True:
             centers_tmp = []
@@ -48,10 +46,8 @@ class hierarchicalKMeans:
                 if len(dataset_sep) >= 2:
                     BIC_before = self.BIC.calculate([dataset_sep], np.array([self.centers[k, :]]), 1)
                     centers, labels = self.kMeans.fit(dataset_sep, 2)
-                    # print(len(centers))
                     BIC_after = self.BIC.calculate([dataset_sep[labels == i, :] for i in range(len(centers))], centers,
                                                    len(centers))
-                    # print(BIC_after, BIC_before)
                     if BIC_after > BIC_before:
                         centers_tmp.extend(list(centers))
                         labels = list(labels)
@@ -68,7 +64,6 @@ class hierarchicalKMeans:
             self.centers = np.array(centers_tmp)
             self.labels = np.array(lables_tmp)
             self.n_cluster = n_clusters_tmp
-            # kmeans_visualize(self.dataset, self.centers, self.labels, self.n_cluster, "Done")
             if self.check_converged():
                 break
         return self.centers, self.labels, self.n_cluster

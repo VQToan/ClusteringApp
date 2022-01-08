@@ -29,7 +29,7 @@ def readDataset(filePath):
 def saveResult(filePath, dataset, labels, n_cluster, header: list):
     with open(filePath, 'w', newline='', encoding="utf-8-sig") as f:
         writer = csv.writer(f)
-        if "Nhóm"not in header:
+        if "Nhóm" not in header:
             header.insert(0, "Nhóm")
         writer.writerow(header)
         for k in range(n_cluster):

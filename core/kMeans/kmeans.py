@@ -49,13 +49,6 @@ class K_means:
 
 
 class BIC:
-    """
-
-    """
-
-    def __init__(self):
-        pass
-
     def n_param(self, n_clusters, n_dims):
         return n_clusters * (n_dims + 1)
 
@@ -90,8 +83,6 @@ class BIC:
 
         BIC = (self.n_param(n_clusters, n_dims) * np.log10(n_points)) + 2 * self.log_likelihood(n_points, n_dims,
                                                                                                clusters, centers)
-        # BIC = self.log_likelihood(n_points, n_dims, clusters, centers) - self.n_param(n_clusters,n_dims) / 2.0 * np.log(n_points)
-        # print(BIC)
         return BIC
 
     def check_input_format(self, clusters, centers, n_clusters):

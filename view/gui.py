@@ -294,7 +294,6 @@ class MainWindow(QMainWindow):
             return
         self.setProgressBar(5)
         self.field4RunList = self.getField4Run()
-        # print(self.field4RunList)
         self.setProgressBar(10)
         self.clusteredData, self.listPercent, self.labels = runAlgorithm(self.dataset, self.datasetBase, self.header,
                                                                          self.headerBase, self.field4RunList, kmax)
@@ -346,6 +345,7 @@ class MainWindow(QMainWindow):
     def showDetail(self):
         self.detailWindows.treeDetail.clear()
         self.detailWindows.show()
+        print(self.field4RunList)
         for i in range(len(self.clusteredData)):
             tmp = QTreeWidgetItem([f"Nhóm {i + 1}"])
             self.detailWindows.treeDetail.addTopLevelItem(tmp)
@@ -364,7 +364,8 @@ class MainWindow(QMainWindow):
             initialFilter='Data File (*.csv)'
         )
         try:
-            saveResult(response[0], np.array(self.dataset), self.labels, len(self.clusteredData), self.field4RunList)
+            print(self.field4RunList)
+            saveResult(response[0], np.array(self.dataset), self.labels, len(self.clusteredData), self.header)
         except:
             return
 
